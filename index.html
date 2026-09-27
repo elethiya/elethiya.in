@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#06060a">
+<title>ELETHIYA — Developer Portfolio</title>
+<meta name="description" content="Developer portfolio — mobile apps, web backends, website design, portfolio sites, and automation bots.">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html{margin:0;padding:0;scroll-behavior:smooth;scroll-padding-top:90px;-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;
+  color:#f2f4fa;background:#000;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+  border-left: 1px solid rgba(255,255,255,0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(76,243,255,0.25);
+  border-radius: 10px;
+  border: 2px solid #000;
+  transition: background 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(76,243,255,0.5);
+}
+
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+button{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid #4cf3ff;outline-offset:3px}
+img,svg{display:block;max-width:100%}
+
+/* ── CANVAS + BG ── */
+canvas#space{position:fixed;inset:0;z-index:0;width:100%;height:100%}
+.bg-grid{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(76,243,255,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(76,243,255,0.05) 1px,transparent 1px),
+    linear-gradient(rgba(76,243,255,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(76,243,255,0.02) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+}
+.bg-grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+.page{position:relative;z-index:2;display:flex;flex-direction:column}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px;width:100%}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
+/* ── HYPERSPACE COUNTDOWN OVERLAY ── */
+#countdownOverlay {
+  position: fixed; inset: 0; z-index: 9998;
+  display: none; align-items: center; justify-content: center;
+  background: transparent; pointer-events: none;
+}
+.count-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(6rem, 15vw, 12rem);
+  font-weight: 700; color: #fff;
+  text-shadow: 0 0 40px rgba(76,243,255,0.8), 0 0 80px rgba(76,243,255,0.5);
+  animation: warpPulse 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+@keyframes warpPulse {
+  0% { transform: scale(0.2); opacity: 0; filter: blur(20px); }
+  30% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
+  70% { transform: scale(1); opacity: 1; filter: blur(0px); }
+  100% { transform: scale(3); opacity: 0; filter: blur(20px); }
+}
+
+#warpFlash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #d4fcff; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease-in;
+}
+
+/* ── NOTICE HEADER (matches elethiya.online) ── */
+.notice-bar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(6,6,10,0.45);
+  border-bottom:1px solid rgba(76,243,255,0.25);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  box-shadow:0 8px 40px -16px rgba(76,243,255,0.3);
+}
+.notice-inner{
+  display:flex;align-items:center;justify-content:center;gap:14px;padding:12px 24px;
+  max-width:1120px;margin:0 auto;
+}
+.notice-tag{
+  flex-shrink:0;
+  font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;
+  color:#4cf3ff;
+  background:rgba(76,243,255,0.1);
+  border:1px solid rgba(76,243,255,0.45);
+  padding:4px 12px;border-radius:999px;
+  box-shadow:0 0 16px rgba(76,243,255,0.35);
+  text-shadow:0 0 8px rgba(76,243,255,0.6);
+}
+.notice-text{margin:0;font-size:13.5px;color:#9ca1af;line-height:1.55;text-align:left;}
+.notice-text strong{color:#f2f4fa;font-weight:600}
+.notice-link{
+  color:#4cf3ff;text-decoration:underline;
+  text-underline-offset:2px;font-weight:600;
+  text-shadow:0 0 8px rgba(76,243,255,0.4);
+}
+.notice-link:hover{color:#a6f7ff}
+
+/* ── HERO ── */
+.hero{display:flex;align-items:center;min-height:calc(100vh - 60px);padding:40px 0}
+.hero-grid{display:grid;grid-template-columns:1fr auto;gap:56px;align-items:center;width:100%}
+.hero-left{display:flex;flex-direction:column;align-items:flex-start}
+
+.eyebrow{
+  font-family:'Space Mono',monospace;font-size:13px;
+  color:#4cf3ff;margin:0 0 14px;opacity:0.6;
+  text-shadow:0 0 8px rgba(76,243,255,0.25);
+}
+.title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(2.4rem,5vw,3.4rem);font-weight:700;
+  margin:0 0 12px;color:#4cf3ff;line-height:1.05;
+  text-shadow:0 0 24px rgba(76,243,255,0.45),0 0 60px rgba(76,243,255,0.15);
+}
+.subtitle{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(1rem,2vw,1.2rem);font-weight:500;
+  color:#9ca1af;margin:0 0 22px;min-height:1.5em;
+  display:flex;align-items:center;
+}
+.role-word{color:#f2f4fa;font-weight:700;white-space:pre}
+.role-cursor{color:#4cf3ff;animation:blink 1s step-end infinite;margin-left:2px}
+
+.hero-desc{margin:0 0 26px;font-size:15px;color:#9ca1af;line-height:1.75;max-width:44ch}
+.hero-desc strong{color:#f2f4fa}
+.hl-cyan{color:#4cf3ff;font-weight:600;text-shadow:0 0 6px rgba(76,243,255,0.25)}
+.hl-green{color:#5cffb0;font-weight:600;text-shadow:0 0 6px rgba(92,255,176,0.25)}
+.hl-pink{color:#ff5fd1;font-weight:600;text-shadow:0 0 6px rgba(255,95,209,0.3)}
+.hl-violet{color:#b18cff;font-weight:600;text-shadow:0 0 6px rgba(177,140,255,0.3)}
+
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:13px 26px;border-radius:10px;font-size:14.5px;font-weight:600;
+  font-family:'Outfit',sans-serif;border:none;cursor:pointer;
+  transition:transform .15s,background .15s,box-shadow .15s,border-color .15s;
+  text-decoration:none;min-height:44px;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:#4cf3ff;color:#041a1c;box-shadow:0 0 24px rgba(76,243,255,0.45),0 0 4px rgba(76,243,255,0.6)}
+.btn-primary:hover{background:#7ef7ff;box-shadow:0 0 36px rgba(76,243,255,0.65),0 0 6px rgba(76,243,255,0.8)}
+.btn-ghost{background:rgba(14,16,22,0.4);color:#9ca1af;border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(8px)}
+.btn-ghost:hover{color:#f2f4fa;border-color:rgba(255,95,209,0.35);box-shadow:0 0 16px rgba(255,95,209,0.18)}
+
+.scroll-hint{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:#5a5f6d;font-family:'Space Mono',monospace;font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;
+  animation:hintBounce 2.5s ease-in-out infinite;
+}
+.scroll-hint svg{opacity:0.4}
+@keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── TERMINAL ── */
+.hero-right{min-width:400px}
+.terminal-wrap{position:relative;border-radius:18px;padding:1px}
+.terminal{
+  position:relative;z-index:1;
+  background:rgba(10,14,22,0.15);
+  border:1px solid rgba(76,243,255,0.15);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 20px 50px -16px rgba(0,0,0,0.5),0 0 24px -6px rgba(76,243,255,0.08),inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px) saturate(120%);
+  -webkit-backdrop-filter:blur(10px) saturate(120%);
+}
+.term-header{
+  background:rgba(255,255,255,0.03);padding:9px 14px;
+  display:flex;align-items:center;gap:7px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-dot.c{background:#ff5f56}.term-dot.m{background:#ffbd2e}.term-dot.x{background:#27c93f}
+.term-title{margin:0 auto;font-family:'Space Mono',monospace;font-size:11px;color:#5a5f6d;padding-right:50px}
+.term-body{padding:14px 16px;font-family:'Space Mono',monospace;font-size:12.5px;color:#9ca1af;line-height:1.65;overflow-x:auto}
+.term-line{margin-bottom:2px;opacity:0;transform:translateX(-6px);transition:opacity .35s ease,transform .35s ease;white-space:nowrap}
+.term-line.show{opacity:1;transform:translateX(0)}
+.term-line:last-child{margin-bottom:0}
+.tp{color:#5cffb0}.tv{color:#4cf3ff}.tw{color:#ff5fd1}.to{color:#ffbd2e}.td{color:#5a5f6d}
+.tcur{animation:blink 1s step-end infinite;color:#5cffb0}
+@keyframes blink{50%{opacity:0}}
+
+/* ── SECTIONS ── */
+.section{padding:56px 0;border-top:1px solid rgba(255,255,255,0.05)}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:12px;color:#4cf3ff;margin:0 0 10px;letter-spacing:.04em;text-shadow:0 0 8px rgba(76,243,255,0.35)}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:700;margin:0 0 12px;color:#4cf3ff;text-shadow:0 0 14px rgba(76,243,255,0.35);line-height:1.15}
+.section-lead{color:#9ca1af;max-width:54ch;margin:0 0 28px;font-size:15px;line-height:1.7}
+
+.title-flex { display:flex;align-items:center;gap:12px;flex-wrap:wrap }
+.hub-badge {
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;
+  font-weight:700;letter-spacing:.05em;color:#ff3377;
+  border:2px solid #ff3377;padding:2px 10px;border-radius:6px;
+  box-shadow:0 0 15px rgba(255,51,119,0.4),inset 0 0 8px rgba(255,51,119,0.2);
+  text-shadow:0 0 8px rgba(255,51,119,0.6);
+  background:rgba(255,51,119,0.05);line-height:1.2;
+}
+.hub-features-list{list-style:none;padding:0;margin:0 0 32px 0;max-width:60ch}
+.hub-features-list li{position:relative;padding-left:24px;margin-bottom:12px;color:#9ca1af;font-size:15px;line-height:1.6}
+.hub-features-list li::before{content:'→';position:absolute;left:0;color:#ff3377;font-weight:bold}
+.hub-features-list li strong{color:#f2f4fa}
+
+/* ── SERVICE CARDS ── */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.service-card{
+  background:rgba(10,12,18,0.42);border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:24px 20px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.service-card:hover{transform:translateY(-3px);border-color:rgba(76,243,255,0.25);box-shadow:0 14px 36px -14px rgba(76,243,255,0.18),inset 0 1px 0 rgba(255,255,255,0.04)}
+.card-icon{
+  display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;margin-bottom:14px;border-radius:10px;
+}
+.card-icon.cyan{color:#4cf3ff;border:1px solid rgba(76,243,255,0.15);background:rgba(76,243,255,0.06)}
+.card-icon.green{color:#5cffb0;border:1px solid rgba(92,255,176,0.15);background:rgba(92,255,176,0.06)}
+.card-icon.pink{color:#ff5fd1;border:1px solid rgba(255,95,209,0.15);background:rgba(255,95,209,0.06)}
+.card-icon.violet{color:#b18cff;border:1px solid rgba(177,140,255,0.15);background:rgba(177,140,255,0.06)}
+.service-card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:0 0 8px;color:#f2f4fa}
+.service-card p{font-size:13.5px;color:#9ca1af;margin:0;line-height:1.6}
+
+/* ── BOT CARDS ── */
+.bots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.bot-card{
+  background:rgba(10,12,18,0.42);border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;padding:22px 16px;text-align:center;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.bot-card:hover{transform:translateY(-3px)}
+.bot-card:nth-child(1):hover,.bot-card:nth-child(2):hover{border-color:rgba(92,255,176,0.35);box-shadow:0 10px 28px -10px rgba(92,255,176,0.25)}
+.bot-card:nth-child(3):hover{border-color:rgba(76,243,255,0.35);box-shadow:0 10px 28px -10px rgba(76,243,255,0.25)}
+.bot-card:nth-child(4):hover{border-color:rgba(177,140,255,0.35);box-shadow:0 10px 28px -10px rgba(177,140,255,0.25)}
+.bot-icon{display:flex;align-items:center;justify-content:center;width:46px;height:46px;margin:0 auto 12px;border-radius:11px}
+.bot-icon.green{color:#5cffb0;border:1px solid rgba(92,255,176,0.15);background:rgba(92,255,176,0.06)}
+.bot-icon.cyan{color:#4cf3ff;border:1px solid rgba(76,243,255,0.15);background:rgba(76,243,255,0.06)}
+.bot-icon.violet{color:#b18cff;border:1px solid rgba(177,140,255,0.15);background:rgba(177,140,255,0.06)}
+.bot-card h3{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:700;margin:0 0 6px;color:#f2f4fa}
+.bot-card p{font-size:12px;color:#9ca1af;margin:0;line-height:1.55}
+
+/* ── CONTACT ── */
+.contact-section{padding:56px 0;border-top:1px solid rgba(255,255,255,0.05)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:28px;align-items:start}
+.contact-sub-label{font-family:'Space Mono',monospace;font-size:10px;color:#5a5f6d;text-transform:uppercase;letter-spacing:.08em;margin:0 0 14px}
+.contact-cards{display:flex;flex-direction:column;gap:12px}
+.contact-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;border-radius:14px;
+  background:rgba(10,12,18,0.42);border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+  text-decoration:none;color:inherit;min-height:64px;
+}
+.contact-card:hover{transform:translateY(-2px);border-color:rgba(76,243,255,0.25);box-shadow:0 10px 28px -10px rgba(76,243,255,0.18)}
+.contact-icon{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:11px;flex-shrink:0}
+.contact-icon.email{color:#4cf3ff;background:rgba(76,243,255,0.07);border:1px solid rgba(76,243,255,0.18)}
+.contact-icon.wa{color:#5cffb0;background:rgba(92,255,176,0.07);border:1px solid rgba(92,255,176,0.18)}
+.contact-info{display:flex;flex-direction:column;min-width:0}
+.contact-label{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:700;color:#f2f4fa;margin-bottom:2px}
+.contact-value{font-family:'Space Mono',monospace;font-size:12px;color:#9ca1af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.social-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.social-link{
+  display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:11px;
+  background:rgba(10,12,18,0.42);border:1px solid rgba(255,255,255,0.08);
+  color:#5a5f6d;backdrop-filter:blur(10px);
+  transition:transform .18s,border-color .18s,color .18s,box-shadow .18s;
+}
+.social-link:hover{transform:translateY(-2px);color:#f2f4fa}
+.social-link.sl-x:hover{border-color:rgba(255,255,255,0.25);box-shadow:0 6px 20px -6px rgba(255,255,255,0.12)}
+.social-link.sl-yt:hover{color:#ff4444;border-color:rgba(255,68,68,0.3);box-shadow:0 6px 20px -6px rgba(255,68,68,0.18)}
+.social-link.sl-ig:hover{color:#ff5fd1;border-color:rgba(255,95,209,0.3);box-shadow:0 6px 20px -6px rgba(255,95,209,0.18)}
+.social-link.sl-gh:hover{border-color:rgba(255,255,255,0.25);box-shadow:0 6px 20px -6px rgba(255,255,255,0.12)}
+
+.contact-right{display:flex;flex-direction:column;align-items:flex-start}
+.contact-cta-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;margin:0 0 10px;color:#f2f4fa;line-height:1.2}
+.contact-cta-sub{color:#9ca1af;font-size:14px;margin:0 0 22px;line-height:1.7;max-width:36ch}
+.contact-cta-actions{display:flex;gap:12px;flex-wrap:wrap;width:100%}
+
+/* ── BACK TO TOP ── */
+.btt{
+  position:fixed;bottom:24px;right:24px;z-index:40;
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(10,12,18,0.6);border:1px solid rgba(76,243,255,0.25);
+  color:#4cf3ff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px -6px rgba(76,243,255,0.3);
+  opacity:0;transform:translateY(12px);
+  transition:opacity .3s,transform .3s,border-color .15s;pointer-events:none;
+}
+.btt.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.btt:hover{border-color:rgba(76,243,255,0.5)}
+
+/* ── FOOTER ── */
+.site-footer{
+  position:relative;z-index:2;padding:18px 20px;text-align:center;
+  background:rgba(6,6,10,0.45);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(255,255,255,0.04);
+  padding-bottom:calc(18px + env(safe-area-inset-bottom));
+}
+.footer-copy{margin:0;font-family:'Space Grotesk',sans-serif;font-size:11.5px;color:rgba(255,255,255,0.35)}
+.footer-dev{margin:2px 0 0;font-family:'Space Grotesk',sans-serif;font-size:10.5px;color:rgba(255,255,255,0.2)}
+.footer-neon{color:#ff5fd1;font-weight:700;text-shadow:0 0 8px rgba(255,95,209,0.4)}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — MOBILE OPTIMIZATIONS
+   ═══════════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:32px}
+  .hero-right{min-width:100%;order:2}.hero-left{order:1}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .bots-grid{grid-template-columns:repeat(2,1fr)}
+  .contact-grid{grid-template-columns:1fr;gap:28px}
+  .contact-right .contact-sub-label.spacer{display:none}
+}
+
+@media(max-width:720px){
+  /* HEADER match for tablet/mobile */
+  .notice-inner{
+    flex-wrap:wrap;justify-content:flex-start;gap:10px;padding:12px 20px;
+  }
+  .notice-tag{order:1}
+  .notice-text{order:2;flex-basis:100%;font-size:13px;line-height:1.6}
+}
+
+@media(max-width:600px){
+  .wrap{padding:0 18px}
+  html{scroll-padding-top:100px}
+
+  /* HERO — tighter for mobile */
+  .hero{padding:32px 0 20px;min-height:auto}
+  .hero-grid{gap:28px}
+  .eyebrow{font-size:11px;margin-bottom:10px;letter-spacing:.02em}
+  .title{font-size:clamp(2.2rem,10vw,2.8rem);margin-bottom:8px}
+  .subtitle{font-size:1rem;margin-bottom:16px}
+  .hero-desc{font-size:14px;margin-bottom:22px;line-height:1.7;max-width:100%}
+  .hero-actions{flex-direction:column;width:100%;gap:10px}
+  .btn{width:100%;justify-content:center;padding:14px 20px;font-size:14.5px;min-height:48px}
+
+  /* TERMINAL — compact on mobile */
+  .term-header{padding:8px 12px}
+  .term-title{font-size:10px;padding-right:36px}
+  .term-body{padding:12px 14px;font-size:11.5px}
+
+  /* SECTIONS */
+  .section{padding:44px 0}
+  .contact-section{padding:44px 0}
+  .section-title{font-size:clamp(1.5rem,6vw,1.8rem)}
+  .section-lead{font-size:14px;margin-bottom:22px;line-height:1.65}
+
+  /* SERVICES / BOTS */
+  .services-grid{grid-template-columns:1fr;gap:12px}
+  .service-card{padding:20px 18px}
+  .service-card h3{font-size:15.5px}
+  .service-card p{font-size:13px}
+  .bots-grid{gap:10px}
+  .bot-card{padding:18px 12px}
+  .bot-icon{width:42px;height:42px}
+  .bot-card h3{font-size:13px}
+  .bot-card p{font-size:11.5px}
+
+  /* ABOUT */
+  .hub-features-list li{font-size:14px;margin-bottom:11px}
+  .hub-badge{font-size:12.5px;padding:2px 8px}
+
+  /* CONTACT */
+  .contact-card{padding:14px 15px;gap:12px;min-height:60px}
+  .contact-icon{width:40px;height:40px}
+  .contact-label{font-size:13px}
+  .contact-value{font-size:11.5px}
+  .contact-cta-title{font-size:1.35rem}
+  .contact-cta-sub{font-size:13.5px;margin-bottom:18px}
+  .contact-cta-actions{flex-direction:column;width:100%}
+  .contact-cta-actions .btn{width:100%}
+  .social-link{width:44px;height:44px}
+
+  .scroll-hint{display:none}
+  .btt{bottom:16px;right:16px;width:42px;height:42px}
+}
+
+@media(max-width:420px){
+  /* HEADER match for small mobile */
+  .notice-inner{padding:10px 16px;gap:8px}
+  .notice-tag{font-size:10px;padding:3px 10px}
+  .notice-text{font-size:12.5px}
+}
+
+@media(max-width:380px){
+  .wrap{padding:0 14px}
+  .title{font-size:1.9rem}
+  .term-body{font-size:10.5px;padding:10px 12px}
+  .bots-grid{grid-template-columns:1fr}
+}
+
+/* Respect reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .scroll-hint{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div id="countdownOverlay" aria-hidden="true"></div>
+<div id="warpFlash" aria-hidden="true"></div>
+
+<canvas id="space"></canvas>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
+
+<div class="page">
+  <!-- NOTICE HEADER (Matched with elethiya.online) -->
+  <header class="notice-bar" id="noticeBar">
+    <div class="notice-inner">
+      <span class="notice-tag">notice</span>
+      <p class="notice-text">
+        <strong>elethiya.online</strong> is no longer maintained and will be permanently closed in the coming months.
+        Please use our primary domain 
+        <a href="https://elethiya.com" target="_blank" rel="noopener" class="notice-link">elethiya.com</a>.
+      </p>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="wrap" style="position:relative">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <p class="eyebrow">// developer · designer · app builder</p>
+          <h1 class="title">ELETHIYA</h1>
+          <p class="subtitle">I build&nbsp;<span class="role-word" id="roleWord"></span><span class="role-cursor">|</span></p>
+          <p class="hero-desc">
+            From <span class="hl-cyan">mobile apps</span> and
+            <span class="hl-green">web backends</span> to
+            <span class="hl-pink">website designs</span>,
+            <span class="hl-violet">portfolios</span>, and
+            <span class="hl-green">automation bots</span> for your business —
+            I handle the full stack and offer dedicated hosting via <strong>ELETHIYA [hub]</strong>, so you can focus on what matters.
+          </p>
+          <div class="hero-actions">
+            <a href="#services" class="btn btn-primary">See what I build</a>
+            <a href="#contact" class="btn btn-ghost">Work with me</a>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="terminal-wrap">
+            <div class="terminal">
+              <div class="term-header">
+                <span class="term-dot c"></span><span class="term-dot m"></span><span class="term-dot x"></span>
+                <span class="term-title">developer.sh</span>
+              </div>
+              <div class="term-body" id="termBody">
+                <div class="term-line"><span class="tp">$</span> <span class="td">cat</span> skills.json</div>
+                <div class="term-line"><span class="td">{</span></div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"mobile"</span>: <span class="tv">"Flutter, Android"</span>,</div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"backend"</span>: <span class="tv">"Node.js, Express, FastAPI"</span>,</div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"frontend"</span>: <span class="tv">"HTML, CSS, JS"</span>,</div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"design"</span>: <span class="tv">"UI/UX, Motion Design"</span>,</div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"portfolio"</span>: <span class="tv">"Personal, Brand, Agency"</span>,</div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"bots"</span>: <span class="tv">"WhatsApp, Telegram, Discord"</span>,</div>
+                <div class="term-line">&nbsp;&nbsp;<span class="to">"infra"</span>: <span class="tv">"Nginx, Linux, Cloudflare"</span></div>
+                <div class="term-line"><span class="td">}</span></div>
+                <div class="term-line"><span class="tp">$</span> <span class="td">echo</span> <span class="tw">"ready to build"</span> <span class="tcur">▍</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" aria-hidden="true">
+        <span>scroll</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="wrap">
+      <p class="section-eyebrow reveal">Services</p>
+      <h2 class="section-title reveal">What I build</h2>
+      <p class="section-lead reveal">Clean, functional work across the stack — no unnecessary complexity, just solutions that do what they're supposed to.</p>
+
+      <div class="services-grid">
+        <div class="service-card reveal reveal-delay-1">
+          <span class="card-icon cyan"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></span>
+          <h3>Mobile Apps</h3>
+          <p>Cross-platform apps with Flutter — fast, native-feeling, Android &amp; iOS from one codebase.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <span class="card-icon green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span>
+          <h3>Web Backends &amp; APIs</h3>
+          <p>Server logic with Node.js, Express, or FastAPI. REST APIs, auth, database integration, and deployment.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-3">
+          <span class="card-icon pink"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+          <h3>Website Design</h3>
+          <p>Responsive websites with clean layouts, smooth interactions, and designs that don't look like templates.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-1">
+          <span class="card-icon violet"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+          <h3>Portfolio Sites</h3>
+          <p>Custom portfolios for creatives, developers, agencies — built to showcase work with personality.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <span class="card-icon cyan"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M2 12h20"/><path d="M12 2v20"/><circle cx="7" cy="17" r="1"/><circle cx="17" cy="17" r="1"/></svg></span>
+          <h3>Automation &amp; Bots</h3>
+          <p>Custom bots and tools that handle repetitive work — auth flows, support, notifications.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTS -->
+  <section class="section" id="bots">
+    <div class="wrap">
+      <p class="section-eyebrow reveal">Automation</p>
+      <h2 class="section-title reveal">Bots for your business</h2>
+      <p class="section-lead reveal">Automate the things that slow you down. Each bot fits your specific workflow.</p>
+
+      <div class="bots-grid">
+        <div class="bot-card reveal reveal-delay-1">
+          <span class="bot-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M9 12h.01M12 12h.01M15 12h.01"/></svg></span>
+          <h3>WhatsApp Auth</h3>
+          <p>OTP verification and auth flows via WhatsApp.</p>
+        </div>
+        <div class="bot-card reveal reveal-delay-2">
+          <span class="bot-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/><circle cx="9" cy="16" r="1"/><circle cx="15" cy="16" r="1"/></svg></span>
+          <h3>WhatsApp Chatbots</h3>
+          <p>Customer support, order tracking, business comms.</p>
+        </div>
+        <div class="bot-card reveal reveal-delay-3">
+          <span class="bot-icon cyan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5L12 14l-4-4L2 16"/><path d="M21 5h-6M21 5v6"/></svg></span>
+          <h3>Telegram Bots</h3>
+          <p>Commands, groups, notifications, workflow tools.</p>
+        </div>
+        <div class="bot-card reveal reveal-delay-4">
+          <span class="bot-icon violet"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M7.5 12.5L5 21l7-3 7 3-2.5-8.5"/></svg></span>
+          <h3>Discord Bots</h3>
+          <p>Moderation, roles, commands, community tools.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT / HUB -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <p class="section-eyebrow reveal">About Us</p>
+      <h2 class="section-title reveal title-flex">
+        ELETHIYA <span class="hub-badge">hub</span>
+      </h2>
+      <p class="section-lead reveal" style="margin-bottom: 16px;">We also have a platform named <strong>ELETHIYA [hub]</strong>. On this platform, we provide hosting solutions tailored specifically for your projects, ensuring you get online instantly (in fact, this very portfolio is currently hosted on ELETHIYA [hub]!). Here is what we offer:</p>
+      <ul class="hub-features-list reveal reveal-delay-1">
+        <li><strong>Portfolio Hosting:</strong> Fast, reliable hosting to showcase your personal and professional work.</li>
+        <li><strong>Node.js:</strong> Seamless deployment and hosting for your JavaScript/TypeScript backend applications.</li>
+        <li><strong>PHP:</strong> Secure and optimized environments for traditional and modern PHP projects.</li>
+        <li><strong>Python FastAPI:</strong> High-performance hosting dedicated to serving your fast, modern Python APIs.</li>
+        <li><strong>Domain Flexibility:</strong> Every project comes with a free subdomain, OR <strong>bring your own domain</strong> and link it easily via Cloudflare.</li>
+      </ul>
+      <div class="reveal reveal-delay-2">
+        <button id="visitHubBtn" class="btn btn-primary">Visit www.elethiya.com</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="wrap">
+      <p class="section-eyebrow reveal">Contact</p>
+      <h2 class="section-title reveal">Get in touch</h2>
+
+      <div class="contact-grid">
+        <div class="contact-left reveal">
+          <p class="contact-sub-label">Primary</p>
+          <div class="contact-cards">
+            <a href="mailto:elethiyaofficial@gmail.com" class="contact-card">
+              <span class="contact-icon email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg></span>
+              <span class="contact-info"><span class="contact-label">Email</span><span class="contact-value">elethiyaofficial@gmail.com</span></span>
+            </a>
+            <a href="https://wa.me/919876543210" target="_blank" rel="noopener" class="contact-card wa">
+              <span class="contact-icon wa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+              <span class="contact-info"><span class="contact-label">WhatsApp</span><span class="contact-value">+91 60013 05615</span></span>
+            </a>
+          </div>
+          <p class="contact-sub-label" style="margin-top:22px">Socials</p>
+          <div class="social-row">
+            <a href="https://x.com/elethiya" target="_blank" rel="noopener" class="social-link sl-x" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="https://youtube.com/@elethiya" target="_blank" rel="noopener" class="social-link sl-yt" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98"/></svg></a>
+            <a href="https://instagram.com/elethiya.in" target="_blank" rel="noopener" class="social-link sl-ig" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+            <a href="https://github.com/elethiya" target="_blank" rel="noopener" class="social-link sl-gh" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg></a>
+          </div>
+        </div>
+        <div class="contact-right reveal">
+          <p class="contact-sub-label spacer" style="visibility: hidden;">Action</p>
+          <h3 class="contact-cta-title">Got a project in mind?</h3>
+          <p class="contact-cta-sub">Whether it's an app, a backend, a website, or a bot — let's talk about what you need and make it happen.</p>
+          <div class="contact-cta-actions">
+            <a href="mailto:contact@elethiya.com" class="btn btn-primary">Send me a message</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p class="footer-copy">&copy; 2026 <span class="footer-neon">ELETHIYA</span> | All rights reserved</p>
+    <p class="footer-dev">Developed &amp; Powered By - <span class="footer-neon">ELETHIYA</span></p>
+  </footer>
+</div>
+
+<button class="btt" id="btt" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+// ── STARFIELD (with mobile perf optimization) ──
+window.starSpeed = 1.2;
+window.isWarping = false;
+
+(function(){
+  var c=document.getElementById('space'),x=c.getContext('2d');
+  var W,H,cx,cy,s=[],mx=0,my=0;
+  // Mobile perf: fewer stars, cap DPR
+  var isMobile = window.matchMedia('(max-width: 600px)').matches;
+  var N = isMobile ? 200 : 500;
+  var dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+
+  function re(){
+    W = innerWidth; H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    c.style.width = W + 'px'; c.style.height = H + 'px';
+    x.setTransform(dpr,0,0,dpr,0,0);
+    cx = W/2; cy = H/2;
+  }
+  function ini(){s=[];for(var i=0;i<N;i++)s.push(mk(1))}
+  function mk(r){return{x:(Math.random()-.5)*W*2,y:(Math.random()-.5)*H*2,z:r?Math.random()*W:W,c:rc()}}
+  function rc(){var r=Math.random();if(r<.06)return[76,243,255];if(r<.1)return[255,95,209];if(r<.13)return[92,255,176];if(r<.15)return[177,140,255];return[255,255,255]}
+
+  var sh=[];
+  function spSh(){
+    if (!isMobile) sh.push({x:Math.random()*W,y:Math.random()*H*.4,vx:4+Math.random()*6,vy:2+Math.random()*3,l:1,ln:40+Math.random()*80});
+    setTimeout(spSh,4e3+Math.random()*1e4);
+  }
+  setTimeout(spSh,3e3);
+
+  function draw(){
+    var clearAlpha = window.isWarping ? 0.15 : 0.9;
+    x.fillStyle = 'rgba(0,0,0,' + clearAlpha + ')';
+    x.fillRect(0,0,W,H);
+
+    if (window.isWarping && window.starSpeed < 45) window.starSpeed += 0.4;
+
+    var ox=(mx-cx)*.012,oy=(my-cy)*.012;
+    for(var i=0;i<s.length;i++){
+      var p=s[i];
+      p.z-=window.starSpeed;
+      if(p.z<=0){s[i]=mk(0);continue}
+      var sx=(p.x/p.z)*cx+cx+ox,sy=(p.y/p.z)*cy+cy+oy;
+      if(sx<-10||sx>W+10||sy<-10||sy>H+10){s[i]=mk(0);continue}
+      var d=1-p.z/W, sz=d*2.5, a=d*.85, cl=p.c;
+      if (window.isWarping) sz *= 1.5;
+      if(!isMobile && (cl[0]!==255||cl[1]!==255||cl[2]!==255)){x.shadowBlur=10;x.shadowColor='rgba('+cl+',0.7)'}else x.shadowBlur=0;
+      x.fillStyle='rgba('+cl+','+a+')';x.beginPath();x.arc(sx,sy,Math.max(sz,.3),0,Math.PI*2);x.fill();x.shadowBlur=0;
+    }
+    for(var j=sh.length-1;j>=0;j--){
+      var s2=sh[j];s2.x+=s2.vx;s2.y+=s2.vy;s2.l-=.012;
+      if(s2.l<=0){sh.splice(j,1);continue}
+      var g=x.createLinearGradient(s2.x-s2.vx*s2.ln*.15,s2.y-s2.vy*s2.ln*.15,s2.x,s2.y);
+      g.addColorStop(0,'rgba(76,243,255,0)');
+      g.addColorStop(1,'rgba(76,243,255,'+s2.l*.7+')');
+      x.strokeStyle=g;x.lineWidth=1.5;x.beginPath();
+      x.moveTo(s2.x-s2.vx*s2.ln*.15,s2.y-s2.vy*s2.ln*.15);x.lineTo(s2.x,s2.y);x.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  addEventListener('resize',re);
+  if (!isMobile) addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
+  re();ini();draw();
+})();
+
+// ── HYPERSPACE JUMP ──
+document.getElementById('visitHubBtn').addEventListener('click', function() {
+  var overlay = document.getElementById('countdownOverlay');
+  overlay.style.display = 'flex';
+  window.isWarping = true;
+  window.starSpeed = 2;
+  var count = 3;
+  overlay.innerHTML = '<span class="count-number">' + count + '</span>';
+  var interval = setInterval(function() {
+    count--;
+    if (count > 0) {
+      overlay.innerHTML = '';
+      void overlay.offsetWidth;
+      overlay.innerHTML = '<span class="count-number">' + count + '</span>';
+    } else {
+      clearInterval(interval);
+      document.getElementById('warpFlash').style.opacity = '1';
+      setTimeout(function() { window.location.href = 'https://www.elethiya.com'; }, 500);
+    }
+  }, 1000);
+});
+
+// ── TERMINAL FADE IN ──
+(function(){
+  var lines=document.querySelectorAll('.term-line');
+  var delay=0;
+  lines.forEach(function(l){setTimeout(function(){l.classList.add('show')},delay);delay+=120});
+})();
+
+// ── TYPING ANIMATION ──
+(function(){
+  const roles = ['apps', 'backends', 'websites', 'portfolios', 'bots', 'designs'];
+  let roleIndex = 0, charIndex = 0, isDeleting = false;
+  const roleEl = document.getElementById('roleWord');
+  function typeEffect() {
+    const currentWord = roles[roleIndex];
+    if (isDeleting) { roleEl.textContent = currentWord.substring(0, charIndex - 1); charIndex--; }
+    else { roleEl.textContent = currentWord.substring(0, charIndex + 1); charIndex++; }
+    let typeSpeed = isDeleting ? 40 : 100;
+    if (!isDeleting && charIndex === currentWord.length) { typeSpeed = 1500; isDeleting = true; }
+    else if (isDeleting && charIndex === 0) { isDeleting = false; roleIndex = (roleIndex + 1) % roles.length; typeSpeed = 500; }
+    setTimeout(typeEffect, typeSpeed);
+  }
+  setTimeout(typeEffect, 600);
+})();
+
+// ── SCROLL REVEAL ──
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+  },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+})();
+
+// ── BACK TO TOP ──
+(function(){
+  var btn=document.getElementById('btt');
+  addEventListener('scroll',function(){btn.classList.toggle('show',scrollY>500)},{passive:true});
+  btn.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+})();
+</script>
+</body>
+</html>
